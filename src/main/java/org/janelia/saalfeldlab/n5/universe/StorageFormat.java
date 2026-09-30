@@ -42,6 +42,8 @@ public enum StorageFormat {
 
 	public static StorageFormat guessStorageFromUri(URI uri) {
 
+		if (uri.getPath() == null) // opaque, e.g. "urn:..."; no extension to go by
+			return null;
 		for (final StorageFormat format : StorageFormat.values()) {
 			if (format.uriTest.test(uri))
 				return format;

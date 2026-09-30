@@ -58,6 +58,8 @@ public class N5Factory implements Serializable {
 	private static final long serialVersionUID = -6823715427289454617L;
 	final static Pattern HTTPS_SCHEME = Pattern.compile("http(s)?", Pattern.CASE_INSENSITIVE);
 	final static Pattern FILE_SCHEME = Pattern.compile("file", Pattern.CASE_INSENSITIVE);
+	// Two or more characters, so a Windows drive letter ("C:\...") is not taken for a scheme.
+	private final static Pattern HAS_SCHEME = Pattern.compile("^[a-zA-Z][a-zA-Z0-9+.-]+:");
 	private String googleCloudProjectId = null;
 	private StorageFormat preferredStorageFormat = null;
 	private Consumer<S3ClientBuilder> s3BuilderConfig;
@@ -836,6 +838,10 @@ public class N5Factory implements Serializable {
 		try {
 			return URI.create(uri);
 		} catch (final Throwable ignore) {}
+
+		// A URL with characters a URI must escape, such as "s3://bucket/repo|icechunk:", not a local path.
+		if (HAS_SCHEME.matcher(uri).find())
+			return N5URI.getAsUri(uri);
 
 		try {
 			return Paths.get(uri).toUri();
