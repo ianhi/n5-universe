@@ -102,7 +102,7 @@ public enum KeyValueAccessBackend implements Predicate<URI>, TriFunction<URI, N5
 	@Nullable
 	static KeyValueAccess getKeyValueAccess(final URI uri, final N5Factory factory, final boolean readOnly) {
 
-		for (final KeyValueAccessProvider provider : KeyValueAccessProvider.PROVIDERS) {
+		for (final KeyValueAccessProvider provider : KeyValueAccessProvider.providers()) {
 			if (provider.test(uri))
 				return provider.apply(uri, factory, readOnly);
 		}
