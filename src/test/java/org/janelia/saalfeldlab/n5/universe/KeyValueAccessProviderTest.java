@@ -1,5 +1,6 @@
 package org.janelia.saalfeldlab.n5.universe;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -72,5 +73,14 @@ public class KeyValueAccessProviderTest {
 		} finally {
 			KeyValueAccessProvider.unregister(files);
 		}
+	}
+
+	@Test
+	public void localPathsKeepTheirUrlStages() {
+
+		final File repo = new File("my repo").getAbsoluteFile();
+		final URI uri = N5Factory.parseUriFromString(repo + "|icechunk://branch.main/em data");
+		assertEquals("file", uri.getScheme());
+		assertEquals(repo.toURI().getPath() + "|icechunk://branch.main/em data", uri.getPath());
 	}
 }

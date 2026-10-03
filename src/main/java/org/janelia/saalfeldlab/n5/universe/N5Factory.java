@@ -843,6 +843,16 @@ public class N5Factory implements Serializable {
 		if (HAS_SCHEME.matcher(uri).find())
 			return N5URI.getAsUri(uri);
 
+		// A local path followed by URL pipeline stages, such as "/data/repo|icechunk://branch.main". Only the path goes
+		// through Paths, which would collapse the "//" in the stages.
+		final int pipe = uri.indexOf('|');
+		if (pipe > 0) {
+			try {
+				final String path = Paths.get(uri.substring(0, pipe)).toUri().getPath();
+				return new URI("file", null, path + uri.substring(pipe), null);
+			} catch (final Throwable ignore) {}
+		}
+
 		try {
 			return Paths.get(uri).toUri();
 		} catch (final Throwable ignore) {}
